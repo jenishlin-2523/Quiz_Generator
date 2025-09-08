@@ -40,7 +40,7 @@ function StaffDashboard() {
 
     try {
       const res = await axios.post(
-        "http://localhost:8000/quiz/staff/quiz/upload", // <-- updated path here
+        "http://localhost:8000/staff/quiz/upload", // <-- updated path here
         formData,
         {
           headers: {

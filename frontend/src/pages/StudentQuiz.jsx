@@ -25,7 +25,7 @@ const StudentQuiz = () => {
 
         setLoading(true);
         axios
-            .get(`http://localhost:8000/quiz/student/quiz/${quizId}`, {
+            .get(`http://localhost:8000/student/quiz/${quizId}`, {
                 headers: { Authorization: `Bearer ${token}` },
             })
             .then((response) => {
@@ -60,7 +60,7 @@ const StudentQuiz = () => {
         setError("");
         axios
             .post(
-                `http://localhost:8000/quiz/student/quiz/${quizId}/submit`,
+                `http://localhost:8000/student/quiz/${quizId}/submit`,
                 { answers },
                 {
                     headers: { Authorization: `Bearer ${token}` },

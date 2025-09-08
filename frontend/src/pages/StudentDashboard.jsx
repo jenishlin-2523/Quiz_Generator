@@ -22,7 +22,7 @@ const StudentDashboard = () => {
     async function fetchQuizzes() {
       try {
         const { data, status } = await axios.get(
-          "http://localhost:8000/quiz/student/quizzes",
+          "http://localhost:8000/student/quizzes",
           {
             headers: { Authorization: `Bearer ${token}` },
             params: courseId ? { course_id: courseId } : {},

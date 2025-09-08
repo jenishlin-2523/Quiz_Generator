@@ -9,12 +9,18 @@ app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = config.JWT_SECRET_KEY
 
 # Allow CORS for your frontend origin, support credentials, and explicitly expose headers if needed
-CORS(app, origins=["http://localhost:3000"], supports_credentials=True, methods=["GET", "POST", "OPTIONS"])
+CORS(
+    app,
+    origins=["http://localhost:3000"],  # frontend origin
+    supports_credentials=True,
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"]
+)
 
 jwt = JWTManager(app)
 
 app.register_blueprint(auth_bp, url_prefix="/auth")
-app.register_blueprint(quiz_bp, url_prefix="/quiz")
+app.register_blueprint(quiz_bp)
 
 @app.route("/")
 def home():
