@@ -122,6 +122,12 @@ function StaffDashboard() {
   // ---------------- Render ----------------
   return (
     <div className="container">
+      <header style={{ marginBottom: "2rem", textAlign: "center" }}>
+        <h1 style={{ fontSize: "2.2rem", color: "#4f46e5" }}>Staff Dashboard</h1>
+        <p style={{ color: "#6b7280", fontSize: "1rem" }}>
+          All your quizzes can be uploaded here. Select the PDF, choose the course, enter the title, and click "Upload" to submit.
+        </p>
+      </header>
 
       {/* ---------------- Upload Section ---------------- */}
       <div className="upload-section">
