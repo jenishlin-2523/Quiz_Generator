@@ -4,13 +4,19 @@ import json
 from groq import Groq
 from config import GROQ_API_KEY, GROQ_MODEL
 from database.mongo import quizzes_collection
+from datetime import datetime
+
 
 groq_client = Groq(api_key=GROQ_API_KEY)
 
 def text_chunk_limit(text, max_tokens=1500):
     return text[:max_tokens]
 
-def generate_quiz_from_pdf(pdf_file, created_by, course_id=None):
+def generate_quiz_from_pdf(pdf_file, created_by, course_id=None, title="Untitled Quiz"):
+    """
+    Generates quiz from PDF and stores in MongoDB.
+    Accepts optional title and course_id.
+    """
     try:
         doc = fitz.open(stream=pdf_file.read(), filetype="pdf")
         extracted_text = "".join(page.get_text() for page in doc)
@@ -45,14 +51,21 @@ Format:
 
         quiz_data = json.loads(json_match.group(0))
 
-        # Store in MongoDB with course_id
+        # Store in MongoDB with title and course_id
         quiz_id = quizzes_collection.insert_one({
+            "title": title,
             "questions": quiz_data,
             "created_by": created_by,
-            "course_id": course_id  # store course ID here
+            "course_id": course_id,
+            "created_at": datetime.utcnow()
         }).inserted_id
 
-        return {"quiz_id": str(quiz_id), "questions": quiz_data}
+        return {
+            "quiz_id": str(quiz_id),
+            "title": title,
+            "course_id": course_id,
+            "questions": quiz_data
+        }
 
     except Exception as e:
         raise Exception(f"Quiz generation failed: {e}")
