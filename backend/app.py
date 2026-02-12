@@ -4,14 +4,14 @@ from flask_jwt_extended import JWTManager
 import config
 from routes.auth_routes import auth_bp
 from routes.quiz_routes import quiz_bp
+import os
 
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = config.JWT_SECRET_KEY
 
-# Allow CORS for your frontend origin, support credentials, and explicitly expose headers if needed
 CORS(
     app,
-    origins=["http://localhost:3000"],  # frontend origin
+    origins=["http://localhost:3000"],  
     supports_credentials=True,
     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"]
@@ -26,5 +26,7 @@ app.register_blueprint(quiz_bp)
 def home():
     return "✅ Flask server with JWT Auth is running!"
 
+
 if __name__ == "__main__":
-    app.run(debug=True, port=8000)
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host="0.0.0.0", port=port)

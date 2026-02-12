@@ -153,7 +153,7 @@ const StudentQuiz = () => {
 
           const answers = {};
           let currentIndex = 0;
-          let heartbeatInterval = null;
+          let heartbeatInterval = null; 
           let devtoolsInterval = null;
           let tampered = false;
           let submitted = false;

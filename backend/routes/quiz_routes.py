@@ -13,7 +13,7 @@ quiz_bp = Blueprint("quiz", __name__)
 @staff_required
 def get_staff_quizzes():
     staff_id = get_jwt_identity()
-    quizzes_cursor = quizzes_collection.find({"created_by": staff_id}).sort("_id", -1).limit(5)
+    quizzes_cursor = quizzes_collection.find({"created_by": staff_id}).sort("_id", -1)
 
     quizzes = []
     for quiz in quizzes_cursor:
@@ -26,6 +26,7 @@ def get_staff_quizzes():
         })
     return jsonify({"quizzes": quizzes}), 200
 
+
 # ---------------- STAFF UPLOAD QUIZ ----------------
 @quiz_bp.route("/staff/quiz/upload", methods=["POST"])
 @staff_required
@@ -36,22 +37,29 @@ def staff_upload_quiz():
     pdf_file = request.files['pdf']
     course_id = request.form.get("course_id")
     title = request.form.get("title") or "Untitled Quiz"
+    
+    # NEW: Capture question count and CO list from frontend
+    num_questions = request.form.get("num_questions", default=10, type=int)
+    course_outcomes_json = request.form.get("course_outcomes") # This is a JSON string
+    
     identity = get_jwt_identity()
 
     if not course_id:
         return jsonify({"message": "Course ID is required"}), 400
     
     try:
+        # Pass the new parameters to the service
         quiz = generate_quiz_from_pdf(
             pdf_file, 
             created_by=identity, 
             course_id=course_id, 
-            title=title
+            title=title,
+            num_questions=num_questions,
+            course_outcomes_json=course_outcomes_json
         )
 
         return jsonify({
-            "message": "Quiz generated successfully!",
-            "quiz": quiz["questions"],
+            "message": "Quiz generated successfully with CO mapping!",
             "quiz_id": quiz["quiz_id"],
             "title": quiz["title"],
             "course_id": quiz["course_id"]
@@ -61,7 +69,6 @@ def staff_upload_quiz():
         import traceback
         traceback.print_exc()
         return jsonify({"message": str(e)}), 500
-
 
 # ---------------- STAFF GET QUIZ BY ID ----------------
 @quiz_bp.route("/staff/quiz/<quiz_id>", methods=["GET"])
