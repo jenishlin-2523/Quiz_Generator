@@ -13,7 +13,7 @@ CORS(
     app,
     origins=[
         "http://localhost:3000",
-        "https://your-frontend.vercel.app"
+        "https://quiz-generator-h5ni.vercel.app/"
     ], 
     supports_credentials=True,
     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
