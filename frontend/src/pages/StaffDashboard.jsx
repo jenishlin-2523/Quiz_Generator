@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import "../styles/Dashboard.css";
 
@@ -54,27 +54,36 @@ function StaffDashboard() {
   const [message, setMessage] = useState("");
   const [recentQuizzes, setRecentQuizzes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedQuiz, setSelectedQuiz] = useState(null);
+  //const [showModal, setShowModal] = useState(false);
+  //const [selectedQuiz, setSelectedQuiz] = useState(null);
 
   const token = localStorage.getItem("access_token");
   const fileInputRef = useRef(null);
 
-  useEffect(() => {
-    fetchRecentQuizzes();
-  }, []);
 
-  const fetchRecentQuizzes = async () => {
-    if (!token) return;
-    try {
-      const res = await axios.get("https://quiz-gen-hp29.onrender.com/staff/quizzes", {
+const fetchRecentQuizzes = useCallback(async () => {
+  if (!token) return;
+
+  try {
+    const res = await axios.get(
+      "https://quiz-gen-hp29.onrender.com/staff/quizzes",
+      {
         headers: { Authorization: `Bearer ${token}` }
-      });
-      setRecentQuizzes(res.data.quizzes || []);
-    } catch (err) {
-      console.error("Error fetching quizzes:", err);
-    }
-  };
+      }
+    );
+
+    setRecentQuizzes(res.data.quizzes || []);
+  } catch (err) {
+    console.error("Error fetching quizzes:", err);
+  }
+}, [token]);
+
+
+useEffect(() => {
+  fetchRecentQuizzes();
+}, [fetchRecentQuizzes]);
+
+
 
   const handleUpload = async () => {
     if (!pdf || !courseId || !title || !numQuestions) {
@@ -91,7 +100,7 @@ function StaffDashboard() {
     formData.append("course_outcomes", JSON.stringify(COURSE_DATA[courseId].cos));
 
     try {
-      setMessage("🔄 Analyzing content & generating OBE questions...");
+      setMessage("🔄 Analyzing content & generating questions...");
       await axios.post("https://quiz-gen-hp29.onrender.com/staff/quiz/upload", formData, {
         headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
       });
@@ -160,7 +169,7 @@ function StaffDashboard() {
   return (
     <div className="dashboard-wrapper">
       <nav className="side-nav">
-        <div className="logo">OBE<span>GEN</span></div>
+        <div className="logo">QUIZ<span>GEN</span></div>
         <ul className="nav-links">
           <li className={activeTab === "dashboard" ? "active" : ""} onClick={() => setActiveTab("dashboard")}>Dashboard</li>
           <li className={activeTab === "quizzes" ? "active" : ""} onClick={() => setActiveTab("quizzes")}>My Quizzes</li>
@@ -171,7 +180,7 @@ function StaffDashboard() {
         <header className="top-bar">
           <div>
             <h1>{activeTab === "dashboard" ? "Staff Dashboard" : "My Quizzes"}</h1>
-            <p>{activeTab === "dashboard" ? "Generate OBE quizzes from material." : "Manage your assessment library."}</p>
+            <p>{activeTab === "dashboard" ? "Generate quizzes from material." : "Manage your assessment library."}</p>
           </div>
           <div className="user-profile">Prof. Staff</div>
         </header>

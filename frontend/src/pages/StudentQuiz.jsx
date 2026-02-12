@@ -167,7 +167,7 @@ const StudentQuiz = () => {
 
           function escapeHtml(s) {
             if (s === null || s === undefined) return "";
-            return String(s).replace(/[&<>"'\/]/g, function (ch) {
+            return String(s).replace(/[&<>"'/']/g, function (ch) {
               return "&#" + ch.charCodeAt(0) + ";";
             });
           }
