@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import "../styles/Dashboard.css";
 
 const COURSE_DATA = {
@@ -54,37 +55,50 @@ function StaffDashboard() {
   const [message, setMessage] = useState("");
   const [recentQuizzes, setRecentQuizzes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  //const [showModal, setShowModal] = useState(false);
-  //const [selectedQuiz, setSelectedQuiz] = useState(null);
+  
+  // New States for Results Tab
+  const [selectedCourseResults, setSelectedCourseResults] = useState(null);
+  const [resultsData, setResultsData] = useState([]);
+  const [isResultsLoading, setIsResultsLoading] = useState(false);
 
   const token = localStorage.getItem("access_token");
   const fileInputRef = useRef(null);
 
-
-const fetchRecentQuizzes = useCallback(async () => {
-  if (!token) return;
-
-  try {
-    const res = await axios.get(
-      "https://quiz-gen-hp29.onrender.com/staff/quizzes",
-      {
+  // --- FETCH QUIZZES ---
+  const fetchRecentQuizzes = useCallback(async () => {
+    if (!token) return;
+    try {
+      const res = await axios.get("https://quiz-gen-hp29.onrender.com/staff/quizzes", {
         headers: { Authorization: `Bearer ${token}` }
-      }
-    );
+      });
+      setRecentQuizzes(res.data.quizzes || []);
+    } catch (err) {
+      console.error("Error fetching quizzes:", err);
+    }
+  }, [token]);
 
-    setRecentQuizzes(res.data.quizzes || []);
-  } catch (err) {
-    console.error("Error fetching quizzes:", err);
-  }
-}, [token]);
+  // --- FETCH RESULTS FOR SPECIFIC COURSE ---
+  const fetchResultsByCourse = async (courseCode) => {
+    setIsResultsLoading(true);
+    setSelectedCourseResults(courseCode);
+    try {
+      const res = await axios.get(`https://quiz-gen-hp29.onrender.com/staff/results/${courseCode}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setResultsData(res.data.results || []);
+    } catch (err) {
+      console.error("Error fetching results", err);
+      setResultsData([]);
+    } finally {
+      setIsResultsLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    fetchRecentQuizzes();
+  }, [fetchRecentQuizzes]);
 
-useEffect(() => {
-  fetchRecentQuizzes();
-}, [fetchRecentQuizzes]);
-
-
-
+  // --- HANDLE QUIZ UPLOAD ---
   const handleUpload = async () => {
     if (!pdf || !courseId || !title || !numQuestions) {
       alert("Please fill in all fields.");
@@ -118,6 +132,7 @@ useEffect(() => {
     }
   };
 
+  // --- VIEW INDIVIDUAL QUIZ POPUP ---
   const handleViewQuiz = async (quiz_id) => {
     if (!token) return;
     try {
@@ -173,21 +188,22 @@ useEffect(() => {
         <ul className="nav-links">
           <li className={activeTab === "dashboard" ? "active" : ""} onClick={() => setActiveTab("dashboard")}>Dashboard</li>
           <li className={activeTab === "quizzes" ? "active" : ""} onClick={() => setActiveTab("quizzes")}>My Quizzes</li>
+          <li className={activeTab === "results" ? "active" : ""} onClick={() => { setActiveTab("results"); setSelectedCourseResults(null); }}>Results</li>
         </ul>
       </nav>
 
       <main className="main-content">
         <header className="top-bar">
           <div>
-            <h1>{activeTab === "dashboard" ? "Staff Dashboard" : "My Quizzes"}</h1>
-            <p>{activeTab === "dashboard" ? "Generate quizzes from material." : "Manage your assessment library."}</p>
+            <h1>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}</h1>
+            <p>Welcome back, Prof. Staff</p>
           </div>
           <div className="user-profile">Prof. Staff</div>
         </header>
 
-        {activeTab === "dashboard" ? (
+        {/* --- DASHBOARD TAB --- */}
+        {activeTab === "dashboard" && (
           <div className="content-grid">
-            {/* GENERATOR */}
             <section className="card generator-card">
               <h2 className="card-title">Quiz Generator</h2>
               <div className="form-group">
@@ -210,14 +226,6 @@ useEffect(() => {
                   <input type="number" min="5" max="50" value={numQuestions} onChange={(e) => setNumQuestions(e.target.value)} />
                 </div>
               </div>
-              {courseId && (
-                <div className="form-group">
-                  <label>Course Outcomes</label>
-                  <ul style={{ listStyleType: 'disc', paddingLeft: '20px' }}>
-                    {COURSE_DATA[courseId].cos.map((co, i) => <li key={i}>{co}</li>)}
-                  </ul>
-                </div>
-              )}
               <div className="form-group">
                 <label>Quiz Title</label>
                 <input type="text" placeholder="e.g. Unit 1 Quiz" value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -228,52 +236,96 @@ useEffect(() => {
               {message && <p className={`status-msg ${message.includes('✅') ? 'success' : ''}`}>{message}</p>}
             </section>
 
-            {/* RECENT GENERATIONS UI */}
             <section className="card history-section">
-              <div className="section-header">
-                <h2 className="card-title">Recent Generations</h2>
-                <span className="badge-count">{recentQuizzes.length}</span>
-              </div>
+              <h2 className="card-title">Recent Generations</h2>
               <div className="quiz-list mini">
                 {recentQuizzes.slice(0, 5).map((quiz) => (
                   <div key={quiz.quiz_id} className="quiz-item-mini">
-                    <div className="quiz-status-indicator"></div>
                     <div className="quiz-info">
-                      <div className="quiz-main-row">
-                        <h4>{quiz.title}</h4>
-                        <span className="mini-course-code">{quiz.course_id}</span>
-                      </div>
-                      <div className="quiz-sub-row">
-                        <span>{quiz.questions_count} Qs</span>
-                        <span className="dot">•</span>
-                        <span>{new Date(quiz.created_at).toLocaleDateString()}</span>
-                      </div>
+                      <h4>{quiz.title}</h4>
+                      <span>{quiz.course_id} • {quiz.questions_count} Qs</span>
                     </div>
                     <button className="icon-btn-view" onClick={() => handleViewQuiz(quiz.quiz_id)}>View</button>
                   </div>
                 ))}
-                {recentQuizzes.length > 0 && (
-                  <button className="view-all-link" onClick={() => setActiveTab("quizzes")}>view all assessments →</button>
-                )}
               </div>
             </section>
           </div>
-        ) : (
-          /* FULL LIBRARY VIEW */
+        )}
+
+        {/* --- MY QUIZZES TAB --- */}
+        {activeTab === "quizzes" && (
           <section className="card">
-            <h2 className="card-title">All Assessments</h2>
+            <h2 className="card-title">Assessment Library</h2>
             <div className="quiz-grid-layout">
               {recentQuizzes.map((quiz) => (
                 <div key={quiz.quiz_id} className="quiz-card-item">
-                  <span className="course-badge">{quiz.course_id} / {COURSE_DATA[quiz.course_id]?.name || 'Unknown'}</span>
+                  <span className="course-badge">{quiz.course_id}</span>
                   <h3>{quiz.title}</h3>
-                  <p>{quiz.questions_count} Questions • {new Date(quiz.created_at).toLocaleDateString()}</p>
-                  <div className="actions">
-                    <button className="secondary-btn" onClick={() => handleViewQuiz(quiz.quiz_id)}>View</button>
-                  </div>
+                  <p>{quiz.questions_count} Questions</p>
+                  <button className="secondary-btn" onClick={() => handleViewQuiz(quiz.quiz_id)}>View Quiz</button>
                 </div>
               ))}
             </div>
+          </section>
+        )}
+
+        {/* --- RESULTS TAB --- */}
+        {activeTab === "results" && (
+          <section className="card">
+            {!selectedCourseResults ? (
+              <>
+                <h2 className="card-title">Subject Performance</h2>
+                <div className="quiz-grid-layout">
+                  {Object.keys(COURSE_DATA).map((code) => (
+                    <div key={code} className="quiz-card-item result-subject-card" onClick={() => fetchResultsByCourse(code)}>
+                      <span className="course-badge">{code}</span>
+                      <h3>{COURSE_DATA[code].name}</h3>
+                      <p>View student marks and statistics</p>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="results-header">
+                  <button className="back-btn" onClick={() => setSelectedCourseResults(null)}>← Back</button>
+                  <h2>Results for {selectedCourseResults}</h2>
+                </div>
+                {isResultsLoading ? (
+                  <p>Loading results...</p>
+                ) : (
+                  <div className="table-wrapper">
+                    <table className="results-table">
+                      <thead>
+                        <tr>
+                          <th>Student ID</th>
+                          <th>Quiz Title</th>
+                          <th>Score</th>
+                          <th>Percentage</th>
+                          <th>Date</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {resultsData.length > 0 ? resultsData.map((res) => (
+                          <tr key={res.result_id}>
+                            <td>{res.student_id}</td>
+                            <td>{res.quiz_title}</td>
+                            <td>{res.score} / {res.total}</td>
+                            <td className={res.percentage >= 50 ? "pass" : "fail"}>
+                              {res.percentage.toFixed(1)}%
+                            </td>
+                            <td>{new Date(res.submitted_at).toLocaleDateString()}</td>
+                          </tr>
+                        )) : (
+                          <tr><td colSpan="5" className="no-data">No results found for this subject.</td></tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </>
+            )}
           </section>
         )}
       </main>
