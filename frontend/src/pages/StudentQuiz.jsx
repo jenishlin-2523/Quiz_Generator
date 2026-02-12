@@ -22,7 +22,7 @@ const StudentQuiz = () => {
 
     setLoading(true);
     axios
-      .get(`http://localhost:8000/student/quiz/${quizId}`, {
+      .get(`https://quiz-gen-hp29.onrender.com/student/quiz/${quizId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -145,8 +145,8 @@ const StudentQuiz = () => {
         (function() {
           const QUIZ_ID = "${safeQuizId}";
           const TOKEN = "${safeToken}";
-          const API_SUBMIT = "http://localhost:8000/student/quiz/${escapeForInline(quizId)}/submit";
-          const API_HEARTBEAT = "http://localhost:8000/api/exam/heartbeat";
+          const API_SUBMIT = "https://quiz-gen-hp29.onrender.com/student/quiz/${escapeForInline(quizId)}/submit";
+          const API_HEARTBEAT = "https://quiz-gen-hp29.onrender.com/api/exam/heartbeat";
           const QUIZ = ${serializedQuiz};
           const HEARTBEAT_INTERVAL_MS = 5000;
           const DEVTOOLS_DETECT_INTERVAL_MS = 1200;
