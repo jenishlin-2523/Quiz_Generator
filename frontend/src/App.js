@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 import Login from "./pages/login";
+import Register from "./pages/Register";
 import StudentDashboard from "./pages/StudentDashboard";
 import StaffDashboard from "./pages/StaffDashboard";
 import StudentQuiz from "./pages/StudentQuiz";  // import your StudentQuiz component
@@ -28,6 +29,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
         <Route
           path="/student"

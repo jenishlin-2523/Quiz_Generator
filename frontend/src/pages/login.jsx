@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import '../styles/login.css';
@@ -64,6 +65,9 @@ const Login = () => {
               required
             />
             <button type="submit">Login</button>
+            <p className="register-text">
+              Don't have an account? <Link to="/register" style={{ textDecoration: 'none', color: '#007bff' }}>Register here</Link>
+            </p>
           </form>
         </div>
       </div>
