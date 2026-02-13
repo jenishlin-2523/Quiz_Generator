@@ -183,14 +183,48 @@ function StaffDashboard() {
 
   return (
     <div className="dashboard-wrapper">
-      <nav className="side-nav">
-        <div className="logo">QUIZ<span>GEN</span></div>
-        <ul className="nav-links">
-          <li className={activeTab === "dashboard" ? "active" : ""} onClick={() => setActiveTab("dashboard")}>Dashboard</li>
-          <li className={activeTab === "quizzes" ? "active" : ""} onClick={() => setActiveTab("quizzes")}>My Quizzes</li>
-          <li className={activeTab === "results" ? "active" : ""} onClick={() => { setActiveTab("results"); setSelectedCourseResults(null); }}>Results</li>
-        </ul>
-      </nav>
+      <nav className="side-nav" style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+  <div className="logo">QUIZ<span>GEN</span></div>
+  
+  <ul className="nav-links" style={{ marginBottom: "10px" }}> {/* Removed flex: 1 to stop pushing down */}
+    <li className={activeTab === "dashboard" ? "active" : ""} onClick={() => setActiveTab("dashboard")}>Dashboard</li>
+    <li className={activeTab === "quizzes" ? "active" : ""} onClick={() => setActiveTab("quizzes")}>My Quizzes</li>
+    <li className={activeTab === "results" ? "active" : ""} onClick={() => { setActiveTab("results"); setSelectedCourseResults(null); }}>Results</li>
+  </ul>
+
+  {/* This container holds the line and the button. It is now moved up. */}
+  <div style={{ 
+    padding: "15px 20px", 
+    borderTop: "1px solid #e2e8f0", 
+    marginTop: "430px"  // Controls the gap between "Results" and the line
+  }}>
+    <button 
+      style={{
+        width: "100%",
+        padding: "8px 10px", // Reduced from 30px to keep it small
+        backgroundColor: "#f1f5f9",
+        color: "#64748b",
+        border: "1px solid #e2e8f0",
+        borderRadius: "4px",
+        fontSize: "12px",
+        fontWeight: "500",
+        cursor: "pointer",
+        transition: "all 0.2s ease"
+      }} 
+      onMouseOver={(e) => { 
+        e.currentTarget.style.background = "#fee2e2"; 
+        e.currentTarget.style.color = "#ef4444"; 
+      }}
+      onMouseOut={(e) => { 
+        e.currentTarget.style.background = "#f1f5f9"; 
+        e.currentTarget.style.color = "#64748b"; 
+      }}
+      onClick={() => { localStorage.clear(); window.location.assign("/"); }}
+    >
+      Logout
+    </button>
+  </div>
+</nav>
 
       <main className="main-content">
         <header className="top-bar">
@@ -270,64 +304,137 @@ function StaffDashboard() {
           </section>
         )}
 
-        {/* --- RESULTS TAB --- */}
-        {activeTab === "results" && (
-          <section className="card">
-            {!selectedCourseResults ? (
-              <>
-                <h2 className="card-title">Subject Performance</h2>
-                <div className="quiz-grid-layout">
-                  {Object.keys(COURSE_DATA).map((code) => (
-                    <div key={code} className="quiz-card-item result-subject-card" onClick={() => fetchResultsByCourse(code)}>
-                      <span className="course-badge">{code}</span>
-                      <h3>{COURSE_DATA[code].name}</h3>
-                      <p>View student marks and statistics</p>
-                    </div>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="results-header">
-                  <button className="back-btn" onClick={() => setSelectedCourseResults(null)}>← Back</button>
-                  <h2>Results for {selectedCourseResults}</h2>
-                </div>
-                {isResultsLoading ? (
-                  <p>Loading results...</p>
+{/* --- RESULTS TAB --- */}
+{activeTab === "results" && (
+  <section className="results-container" style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
+    {!selectedCourseResults ? (
+      <>
+        <div className="section-header" style={{ marginBottom: "30px" }}>
+          <h2 style={{ fontSize: "1.8rem", color: "#1e293b", fontWeight: "700" }}>Subject Performance</h2>
+          <p style={{ color: "#64748b" }}>Select a course to view detailed analytics and top performers.</p>
+        </div>
+        
+        <div className="quiz-grid-layout" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
+          {Object.keys(COURSE_DATA).map((code) => (
+            <div 
+              key={code} 
+              className="subject-card-saas" 
+              onClick={() => fetchResultsByCourse(code)}
+              style={{
+                background: "white",
+                padding: "24px",
+                borderRadius: "12px",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                cursor: "pointer",
+                transition: "transform 0.2s, box-shadow 0.2s",
+                border: "1px solid #f1f5f9"
+              }}
+              onMouseOver={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 10px 15px -3px rgba(0,0,0,0.1)"; }}
+              onMouseOut={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.1)"; }}
+            >
+              <span style={{ background: "#eff6ff", color: "#3b82f6", padding: "4px 12px", borderRadius: "20px", fontSize: "0.75rem", fontWeight: "700" }}>{code}</span>
+              <h3 style={{ marginTop: "12px", color: "#0f172a", fontSize: "1.2rem" }}>{COURSE_DATA[code].name}</h3>
+              <div style={{ marginTop: "16px", display: "flex", alignItems: "center", color: "#64748b", fontSize: "0.9rem" }}>
+                <span>View Stats</span>
+                <span style={{ marginLeft: "auto" }}>→</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </>
+    ) : (
+      <>
+        <div className="results-header" style={{ display: "flex", alignItems: "center", marginBottom: "32px", gap: "16px" }}>
+          <button 
+            onClick={() => setSelectedCourseResults(null)}
+            style={{ padding: "8px 16px", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px", cursor: "pointer", fontWeight: "600", color: "#475569" }}
+          >
+            ← Back
+          </button>
+          <div>
+            <h2 style={{ fontSize: "1.5rem", color: "#0f172a", margin: 0 }}>{selectedCourseResults} Analytics</h2>
+            <p style={{ color: "#64748b", margin: 0, fontSize: "0.9rem" }}>Showing all student submissions sorted by rank</p>
+          </div>
+        </div>
+
+        {isResultsLoading ? (
+          <div style={{ textAlign: "center", padding: "50px" }}>
+            <div className="spinner"></div> {/* Add CSS for spinner */}
+            <p style={{ color: "#64748b", marginTop: "10px" }}>Analyzing data...</p>
+          </div>
+        ) : (
+          <div style={{ background: "white", borderRadius: "12px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)", overflow: "hidden", border: "1px solid #f1f5f9" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+              <thead>
+                <tr style={{ background: "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>
+                  <th style={{ padding: "16px 24px", color: "#475569", fontWeight: "600", fontSize: "0.85rem", textTransform: "uppercase" }}>Rank</th>
+                  <th style={{ padding: "16px 24px", color: "#475569", fontWeight: "600", fontSize: "0.85rem", textTransform: "uppercase" }}>Student</th>
+                  <th style={{ padding: "16px 24px", color: "#475569", fontWeight: "600", fontSize: "0.85rem", textTransform: "uppercase" }}>Quiz Title</th>
+                  <th style={{ padding: "16px 24px", color: "#475569", fontWeight: "600", fontSize: "0.85rem", textTransform: "uppercase" }}>Score</th>
+                  <th style={{ padding: "16px 24px", color: "#475569", fontWeight: "600", fontSize: "0.85rem", textTransform: "uppercase" }}>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {resultsData.length > 0 ? (
+                  // Sort by percentage descending to show toppers first
+                  [...resultsData].sort((a, b) => b.percentage - a.percentage).map((res, index) => {
+                    // COLOR LOGIC
+                    let scoreColor = "#ef4444"; // Default Red (0-3)
+                    let scoreBg = "#fef2f2";
+                    
+                    if (res.score >= 7) {
+                      scoreColor = "#10b981"; // Green (7-10)
+                      scoreBg = "#ecfdf5";
+                    } else if (res.score >= 4) {
+                      scoreColor = "#f59e0b"; // Orange (4-6)
+                      scoreBg = "#fffbeb";
+                    }
+
+                    return (
+                      <tr key={res.result_id} className="table-row-hover" style={{ borderBottom: "1px solid #f8fafc", transition: "background 0.2s" }}>
+                        <td style={{ padding: "16px 24px", fontWeight: "700", color: index === 0 ? "#f59e0b" : "#94a3b8" }}>
+                          {index === 0 ? "🏆 1" : index + 1}
+                        </td>
+                        <td style={{ padding: "16px 24px", color: "#1e293b", fontWeight: "600" }}>
+                          {res.username || "Anonymous Student"}
+                        </td>
+                        <td style={{ padding: "16px 24px", color: "#64748b" }}>{res.quiz_title}</td>
+                        <td style={{ padding: "16px 24px" }}>
+                          <span style={{ 
+                            padding: "6px 12px", 
+                            borderRadius: "6px", 
+                            backgroundColor: scoreBg, 
+                            color: scoreColor,
+                            fontWeight: "700",
+                            fontSize: "0.9rem",
+                            display: "inline-block",
+                            minWidth: "60px",
+                            textAlign: "center"
+                          }}>
+                            {res.score} / {res.total}
+                          </span>
+                        </td>
+                        <td style={{ padding: "16px 24px", color: "#94a3b8", fontSize: "0.85rem" }}>
+                          {new Date(res.submitted_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                        </td>
+                      </tr>
+                    );
+                  })
                 ) : (
-                  <div className="table-wrapper">
-                    <table className="results-table">
-                      <thead>
-                        <tr>
-                          <th>Student ID</th>
-                          <th>Quiz Title</th>
-                          <th>Score</th>
-                          <th>Percentage</th>
-                          <th>Date</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {resultsData.length > 0 ? resultsData.map((res) => (
-                          <tr key={res.result_id}>
-                            <td>{res.student_id}</td>
-                            <td>{res.quiz_title}</td>
-                            <td>{res.score} / {res.total}</td>
-                            <td className={res.percentage >= 50 ? "pass" : "fail"}>
-                              {res.percentage.toFixed(1)}%
-                            </td>
-                            <td>{new Date(res.submitted_at).toLocaleDateString()}</td>
-                          </tr>
-                        )) : (
-                          <tr><td colSpan="5" className="no-data">No results found for this subject.</td></tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
+                  <tr>
+                    <td colSpan="5" style={{ padding: "40px", textAlign: "center", color: "#94a3b8" }}>
+                      No submissions found for this course yet.
+                    </td>
+                  </tr>
                 )}
-              </>
-            )}
-          </section>
+              </tbody>
+            </table>
+          </div>
         )}
+      </>
+    )}
+  </section>
+)}
       </main>
     </div>
   );
