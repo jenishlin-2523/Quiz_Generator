@@ -303,7 +303,6 @@ function StaffDashboard() {
             </div>
           </section>
         )}
-
 {/* --- RESULTS TAB --- */}
 {activeTab === "results" && (
   <section className="results-container" style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
@@ -326,104 +325,115 @@ function StaffDashboard() {
                 borderRadius: "12px",
                 boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
                 cursor: "pointer",
-                transition: "transform 0.2s, box-shadow 0.2s",
+                transition: "all 0.2s ease",
                 border: "1px solid #f1f5f9"
               }}
-              onMouseOver={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 10px 15px -3px rgba(0,0,0,0.1)"; }}
-              onMouseOut={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.1)"; }}
+              onMouseOver={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.borderColor = "#3b82f6"; }}
+              onMouseOut={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "#f1f5f9"; }}
             >
               <span style={{ background: "#eff6ff", color: "#3b82f6", padding: "4px 12px", borderRadius: "20px", fontSize: "0.75rem", fontWeight: "700" }}>{code}</span>
               <h3 style={{ marginTop: "12px", color: "#0f172a", fontSize: "1.2rem" }}>{COURSE_DATA[code].name}</h3>
-              <div style={{ marginTop: "16px", display: "flex", alignItems: "center", color: "#64748b", fontSize: "0.9rem" }}>
-                <span>View Stats</span>
-                <span style={{ marginLeft: "auto" }}>→</span>
-              </div>
+              <p style={{ fontSize: "0.85rem", color: "#94a3b8", marginTop: "4px" }}>Click to view leaderboard</p>
             </div>
           ))}
         </div>
       </>
     ) : (
       <>
-        <div className="results-header" style={{ display: "flex", alignItems: "center", marginBottom: "32px", gap: "16px" }}>
-          <button 
-            onClick={() => setSelectedCourseResults(null)}
-            style={{ padding: "8px 16px", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px", cursor: "pointer", fontWeight: "600", color: "#475569" }}
-          >
-            ← Back
-          </button>
-          <div>
-            <h2 style={{ fontSize: "1.5rem", color: "#0f172a", margin: 0 }}>{selectedCourseResults} Analytics</h2>
-            <p style={{ color: "#64748b", margin: 0, fontSize: "0.9rem" }}>Showing all student submissions sorted by rank</p>
+        <div className="results-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "32px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <button 
+              onClick={() => setSelectedCourseResults(null)}
+              style={{ padding: "10px 16px", background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "8px", cursor: "pointer", fontWeight: "600", color: "#475569", boxShadow: "0 1px 2px rgba(0,0,0,0.05)" }}
+            >
+              ← Back
+            </button>
+            <div>
+              <h2 style={{ fontSize: "1.5rem", color: "#0f172a", margin: 0 }}>{selectedCourseResults} Analytics</h2>
+              <p style={{ color: "#64748b", margin: 0, fontSize: "0.9rem" }}>Real-time student leaderboard</p>
+            </div>
+          </div>
+          <div style={{ background: "#f1f5f9", padding: "8px 16px", borderRadius: "8px", color: "#475569", fontWeight: "600", fontSize: "0.9rem" }}>
+            Total Submissions: {resultsData?.length || 0}
           </div>
         </div>
 
         {isResultsLoading ? (
-          <div style={{ textAlign: "center", padding: "50px" }}>
-            <div className="spinner"></div> {/* Add CSS for spinner */}
-            <p style={{ color: "#64748b", marginTop: "10px" }}>Analyzing data...</p>
+          <div style={{ textAlign: "center", padding: "100px 0" }}>
+            <div className="spinner" style={{ border: "3px solid #f3f3f3", borderTop: "3px solid #3b82f6", borderRadius: "50%", width: "30px", height: "30px", animation: "spin 1s linear infinite", margin: "0 auto" }}></div>
+            <p style={{ color: "#64748b", marginTop: "15px", fontWeight: "500" }}>Fetching topper list...</p>
           </div>
         ) : (
-          <div style={{ background: "white", borderRadius: "12px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)", overflow: "hidden", border: "1px solid #f1f5f9" }}>
+          <div style={{ background: "white", borderRadius: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.1)", overflow: "hidden", border: "1px solid #f1f5f9" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
               <thead>
-                <tr style={{ background: "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>
-                  <th style={{ padding: "16px 24px", color: "#475569", fontWeight: "600", fontSize: "0.85rem", textTransform: "uppercase" }}>Rank</th>
-                  <th style={{ padding: "16px 24px", color: "#475569", fontWeight: "600", fontSize: "0.85rem", textTransform: "uppercase" }}>Student</th>
-                  <th style={{ padding: "16px 24px", color: "#475569", fontWeight: "600", fontSize: "0.85rem", textTransform: "uppercase" }}>Quiz Title</th>
-                  <th style={{ padding: "16px 24px", color: "#475569", fontWeight: "600", fontSize: "0.85rem", textTransform: "uppercase" }}>Score</th>
-                  <th style={{ padding: "16px 24px", color: "#475569", fontWeight: "600", fontSize: "0.85rem", textTransform: "uppercase" }}>Date</th>
+                <tr style={{ background: "#f8fafc", borderBottom: "2px solid #f1f5f9" }}>
+                  <th style={{ padding: "16px 24px", color: "#64748b", fontWeight: "600", fontSize: "0.75rem", textTransform: "uppercase" }}>Rank</th>
+                  <th style={{ padding: "16px 24px", color: "#64748b", fontWeight: "600", fontSize: "0.75rem", textTransform: "uppercase" }}>Student Name</th>
+                  <th style={{ padding: "16px 24px", color: "#64748b", fontWeight: "600", fontSize: "0.75rem", textTransform: "uppercase" }}>Quiz</th>
+                  <th style={{ padding: "16px 24px", color: "#64748b", fontWeight: "600", fontSize: "0.75rem", textTransform: "uppercase" }}>Performance</th>
+                  <th style={{ padding: "16px 24px", color: "#64748b", fontWeight: "600", fontSize: "0.75rem", textTransform: "uppercase" }}>Date</th>
                 </tr>
               </thead>
               <tbody>
-                {resultsData.length > 0 ? (
-                  // Sort by percentage descending to show toppers first
-                  [...resultsData].sort((a, b) => b.percentage - a.percentage).map((res, index) => {
-                    // COLOR LOGIC
-                    let scoreColor = "#ef4444"; // Default Red (0-3)
-                    let scoreBg = "#fef2f2";
+                {resultsData && resultsData.length > 0 ? (
+                  resultsData.map((res, index) => {
+                    // DEFENSIVE: Convert to Number just in case they are strings
+                    const currentScore = Number(res.score) || 0;
+                    const currentTotal = Number(res.total) || 10;
+
+                    // COLOR LOGIC (0-2: Red, 3-6: Orange, 7-10: Green)
+                    let statusColor = "#ef4444"; 
+                    let statusBg = "#fef2f2";
                     
-                    if (res.score >= 7) {
-                      scoreColor = "#10b981"; // Green (7-10)
-                      scoreBg = "#ecfdf5";
-                    } else if (res.score >= 4) {
-                      scoreColor = "#f59e0b"; // Orange (4-6)
-                      scoreBg = "#fffbeb";
+                    if (currentScore >= 7) {
+                      statusColor = "#10b981"; 
+                      statusBg = "#ecfdf5";
+                    } else if (currentScore >= 3) {
+                      statusColor = "#f59e0b"; 
+                      statusBg = "#fffbeb";
                     }
 
                     return (
-                      <tr key={res.result_id} className="table-row-hover" style={{ borderBottom: "1px solid #f8fafc", transition: "background 0.2s" }}>
-                        <td style={{ padding: "16px 24px", fontWeight: "700", color: index === 0 ? "#f59e0b" : "#94a3b8" }}>
-                          {index === 0 ? "🏆 1" : index + 1}
-                        </td>
-                        <td style={{ padding: "16px 24px", color: "#1e293b", fontWeight: "600" }}>
-                          {res.username || "Anonymous Student"}
-                        </td>
-                        <td style={{ padding: "16px 24px", color: "#64748b" }}>{res.quiz_title}</td>
+                      <tr key={res.result_id || index} style={{ borderBottom: "1px solid #f8fafc" }}>
                         <td style={{ padding: "16px 24px" }}>
                           <span style={{ 
-                            padding: "6px 12px", 
-                            borderRadius: "6px", 
-                            backgroundColor: scoreBg, 
-                            color: scoreColor,
-                            fontWeight: "700",
-                            fontSize: "0.9rem",
-                            display: "inline-block",
-                            minWidth: "60px",
-                            textAlign: "center"
+                            fontWeight: "800", 
+                            color: index === 0 ? "#f59e0b" : "#94a3b8",
+                            fontSize: index < 3 ? "1.1rem" : "0.9rem"
                           }}>
-                            {res.score} / {res.total}
+                            {index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : index + 1}
                           </span>
                         </td>
+                        <td style={{ padding: "16px 24px" }}>
+                          <div style={{ fontWeight: "600", color: "#1e293b" }}>{res.username || "Unknown Student"}</div>
+                        </td>
+                        <td style={{ padding: "16px 24px", color: "#64748b", fontSize: "0.9rem" }}>{res.quiz_title}</td>
+                        <td style={{ padding: "16px 24px" }}>
+                          <div style={{ 
+                            display: "inline-flex", 
+                            alignItems: "center", 
+                            padding: "6px 12px", 
+                            borderRadius: "20px", 
+                            backgroundColor: statusBg, 
+                            color: statusColor,
+                            fontWeight: "700",
+                            fontSize: "0.85rem"
+                          }}>
+                            {/* Rendering the mark here */}
+                            {currentScore} / {currentTotal}
+                          </div>
+                        </td>
                         <td style={{ padding: "16px 24px", color: "#94a3b8", fontSize: "0.85rem" }}>
-                          {new Date(res.submitted_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                          {res.submitted_at ? new Date(res.submitted_at).toLocaleDateString() : "N/A"}
                         </td>
                       </tr>
                     );
                   })
                 ) : (
                   <tr>
-                    <td colSpan="5" style={{ padding: "40px", textAlign: "center", color: "#94a3b8" }}>
-                      No submissions found for this course yet.
+                    <td colSpan="5" style={{ padding: "60px 24px", textAlign: "center" }}>
+                       <div style={{ color: "#94a3b8", fontSize: "0.9rem" }}>No student records found.</div>
                     </td>
                   </tr>
                 )}
