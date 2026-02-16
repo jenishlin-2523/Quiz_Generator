@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 // import { Link } from "react-router-dom";
 import "../styles/Dashboard.css";
+import { HiOutlineDocumentSearch } from "react-icons/hi";
 
 const COURSE_DATA = {
   "AI-301": { 
@@ -282,36 +283,110 @@ function StaffDashboard() {
             <section className="card history-section">
               <h2 className="card-title">Recent Generations</h2>
               <div className="quiz-list mini">
-                {recentQuizzes.slice(0, 5).map((quiz) => (
-                  <div key={quiz.quiz_id} className="quiz-item-mini">
-                    <div className="quiz-info">
-                      <h4>{quiz.title}</h4>
-                      <span>{quiz.course_id} • {quiz.questions_count} Qs</span>
-                    </div>
-                    <button className="icon-btn-view" onClick={() => handleViewQuiz(quiz.quiz_id)}>View</button>
-                  </div>
-                ))}
-              </div>
+  {recentQuizzes && recentQuizzes.length > 0 ? (
+    // Show this if quizzes exist
+    recentQuizzes.slice(0, 5).map((quiz) => (
+      <div key={quiz.quiz_id} className="quiz-item-mini">
+        <div className="quiz-info">
+          <h4>{quiz.title}</h4>
+          <span>{quiz.course_id} • {quiz.questions_count} Qs</span>
+        </div>
+        <button className="icon-btn-view" onClick={() => handleViewQuiz(quiz.quiz_id)}>
+          View
+        </button>
+      </div>
+    ))
+  ) : (
+    // Show this if NO quizzes exist
+    <div className="no-quiz-message" style={{
+      padding: "20px",
+      textAlign: "center",
+      color: "#64748b",
+      fontSize: "14px",
+      backgroundColor: "#f8fafc",
+      borderRadius: "8px",
+      border: "1px dashed #cbd5e1",
+      margin: "10px 0"
+    }}>
+      <p style={{ margin: 0, fontWeight: "500" }}>Quiz not yet generated</p>
+    </div>
+  )}
+</div>
             </section>
           </div>
         )}
 
-        {/* --- MY QUIZZES TAB --- */}
-        {activeTab === "quizzes" && (
-          <section className="card">
-            <h2 className="card-title">Assessment Library</h2>
-            <div className="quiz-grid-layout">
-              {recentQuizzes.map((quiz) => (
-                <div key={quiz.quiz_id} className="quiz-card-item">
-                  <span className="course-badge">{quiz.course_id}</span>
-                  <h3>{quiz.title}</h3>
-                  <p>{quiz.questions_count} Questions</p>
-                  <button className="secondary-btn" onClick={() => handleViewQuiz(quiz.quiz_id)}>View Quiz</button>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+
+
+
+
+
+
+
+
+
+{/* --- MY QUIZZES TAB --- */}
+{activeTab === "quizzes" && (
+  <section className="card">
+    <h2 className="card-title">Assessment Library</h2>
+    
+    {recentQuizzes && recentQuizzes.length > 0 ? (
+      <div 
+        className="quiz-grid-layout" 
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+          gap: "20px",
+          marginTop: "15px"
+        }}
+      >
+        {recentQuizzes.map((quiz) => (
+          <div key={quiz.quiz_id} className="quiz-card-item">
+            <span className="course-badge">{quiz.course_id}</span>
+            <h3>{quiz.title}</h3>
+            <p>{quiz.questions_count} Questions</p>
+            <button 
+              className="secondary-btn" 
+              onClick={() => handleViewQuiz(quiz.quiz_id)}
+            >
+              View Quiz
+            </button>
+          </div>
+        ))}
+      </div>
+    ) : (
+      /* INBUILT EMPTY STATE */
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "60px 20px",
+        backgroundColor: "#f8fafc",
+        border: "2px dashed #e2e8f0",
+        borderRadius: "12px",
+        textAlign: "center",
+        margin: "15px 0"
+      }}>
+        <HiOutlineDocumentSearch style={{ fontSize: "50px", color: "#94a3b8", marginBottom: "15px" }} />
+        <h3 style={{ color: "#1e293b", margin: "0 0 5px 0", fontSize: "16px", fontWeight: "600" }}>
+          Library Empty
+        </h3>
+        <p style={{ color: "#64748b", margin: 0, fontSize: "14px", maxWidth: "300px" }}>
+          No quizzes generated yet. Start by uploading a PDF in the Dashboard.
+        </p>
+      </div>
+    )}
+  </section>
+)}
+
+
+
+
+
+
+
+
 {/* --- RESULTS TAB --- */}
 {activeTab === "results" && (
   <section className="results-container" style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
