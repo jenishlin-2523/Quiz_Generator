@@ -198,38 +198,36 @@ function StaffDashboard() {
     borderTop: "1px solid #e2e8f0", 
     marginTop: "430px"  // Controls the gap between "Results" and the line
   }}>
-    <style>
-  {`
-    .logout-btn {
-      width: 100%;
-      padding: 8px 10px;
-      background-color: #f1f5f9;
-      color: #64748b;
-      border: 1px solid #e2e8f0;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    /* Desktop View: Button shrinks to fit text */
-    @media (min-width: 640px) {
-      .logout-btn {
-        width: auto;
-        min-width: 100px;
-      }
-    }
-
-    .logout-btn:hover {
-      background-color: #fee2e2 !important;
-      color: #ef4444 !important;
-    }
-  `}
-</style>
-
-<button 
-  className="logout-btn"
+    <button 
+  style={{
+    // --- Responsive Positioning ---
+    position: "sticky", 
+    top: "10px",           // Keeps it at the top
+    zIndex: "100",         // Ensures it stays above other elements
+    width: "auto",         // Changed from 100% to fit content
+    minWidth: "100px",     // Keeps a nice shape
+    margin: "0 auto 15px", // Centers it and adds space below
+    display: "block",      // Necessary for auto-centering
+    
+    // --- Original Styling ---
+    padding: "8px 10px",
+    backgroundColor: "#f1f5f9",
+    color: "#64748b",
+    border: "1px solid #e2e8f0",
+    borderRadius: "4px",
+    fontSize: "12px",
+    fontWeight: "500",
+    cursor: "pointer",
+    transition: "all 0.2s ease"
+  }} 
+  onMouseOver={(e) => { 
+    e.currentTarget.style.background = "#fee2e2"; 
+    e.currentTarget.style.color = "#ef4444"; 
+  }}
+  onMouseOut={(e) => { 
+    e.currentTarget.style.background = "#f1f5f9"; 
+    e.currentTarget.style.color = "#64748b"; 
+  }}
   onClick={() => { localStorage.clear(); window.location.assign("/"); }}
 >
   Logout
