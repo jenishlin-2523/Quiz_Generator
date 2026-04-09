@@ -19,7 +19,7 @@ const StudentQuiz = () => {
 
     const fetchQuiz = async () => {
       try {
-        const res = await axios.get(`https://quiz-gen-hp29.onrender.com/student/quiz/${quizId}`, {
+        const res = await axios.get(`http://127.0.0.1:8000/student/quiz/${quizId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -102,7 +102,6 @@ const StudentQuiz = () => {
 
         <div class="navbar">
           <strong>Exam Portal | ${quizId}</strong>
-          <div id="timer" style="font-family: monospace; font-size: 1.2rem;">Timer: 60:00</div>
         </div>
 
         <div class="layout">
@@ -182,7 +181,7 @@ const StudentQuiz = () => {
             submitted = true;
             
             // Post to the submission route we updated in the backend
-            fetch("https://quiz-gen-hp29.onrender.com/student/quiz/${quizId}/submit", {
+            fetch("http://127.0.0.1:8000/student/quiz/${quizId}/submit", {
               method: "POST",
               headers: { 
                 "Content-Type": "application/json", 

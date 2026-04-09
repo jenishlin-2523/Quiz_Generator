@@ -19,7 +19,7 @@ const StudentDashboard = () => {
     async function fetchQuizzes() {
       try {
         const { data, status } = await axios.get(
-          "https://quiz-gen-hp29.onrender.com/student/quizzes",
+          "http://127.0.0.1:8000/student/quizzes",
           {
             headers: { Authorization: `Bearer ${token}` },
             signal: controller.signal,

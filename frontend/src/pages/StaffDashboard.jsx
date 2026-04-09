@@ -69,7 +69,7 @@ function StaffDashboard() {
   const fetchRecentQuizzes = useCallback(async () => {
     if (!token) return;
     try {
-      const res = await axios.get("https://quiz-gen-hp29.onrender.com/staff/quizzes", {
+      const res = await axios.get("http://127.0.0.1:8000/staff/quizzes", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRecentQuizzes(res.data.quizzes || []);
@@ -83,7 +83,7 @@ function StaffDashboard() {
     setIsResultsLoading(true);
     setSelectedCourseResults(courseCode);
     try {
-      const res = await axios.get(`https://quiz-gen-hp29.onrender.com/staff/results/${courseCode}`, {
+      const res = await axios.get(`http://127.0.0.1:8000/staff/results/${courseCode}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setResultsData(res.data.results || []);
@@ -116,7 +116,7 @@ function StaffDashboard() {
 
     try {
       setMessage("🔄 Analyzing content & generating questions...");
-      await axios.post("https://quiz-gen-hp29.onrender.com/staff/quiz/upload", formData, {
+      await axios.post("http://127.0.0.1:8000/staff/quiz/upload", formData, {
         headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
       });
 
@@ -137,7 +137,7 @@ function StaffDashboard() {
   const handleViewQuiz = async (quiz_id) => {
     if (!token) return;
     try {
-      const res = await axios.get(`https://quiz-gen-hp29.onrender.com/staff/quiz/${quiz_id}`, {
+      const res = await axios.get(`http://127.0.0.1:8000/staff/quiz/${quiz_id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const quiz = res.data;

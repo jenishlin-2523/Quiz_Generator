@@ -20,7 +20,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post("https://quiz-gen-hp29.onrender.com/auth/login", {
+      const response = await axios.post("http://127.0.0.1:8000/auth/login", {
         email,
         password,
       });
@@ -47,7 +47,7 @@ const Login = () => {
           <img src="/login.jpg" alt="Login Visual" />
         </div>
         <div className="login-form">
-          <h2>Welcome Staff & Student</h2>
+          <h2> AI Quiz Generator</h2>
           {errorMsg && <p className="login-error">{errorMsg}</p>}
           <form onSubmit={handleSubmit}>
             <label>Email</label>

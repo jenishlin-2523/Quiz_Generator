@@ -20,7 +20,7 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("https://quiz-gen-hp29.onrender.com/auth/register", formData);
+      const response = await axios.post("http://127.0.0.1:8000/auth/register", formData);
       
       if (response.status === 201) {
         alert("Registration successful! You can now login.");
