@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import '../styles/login.css';
+import API_BASE_URL from "../apiConfig";
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -20,7 +22,8 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/auth/login", {
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+
         email,
         password,
       });

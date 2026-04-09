@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import '../styles/login.css';
+import API_BASE_URL from "../apiConfig";
+
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -20,7 +22,8 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/auth/register", formData);
+      const response = await axios.post(`${API_BASE_URL}/auth/register`, formData);
+
       
       if (response.status === 201) {
         alert("Registration successful! You can now login.");

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import API_BASE_URL from "../apiConfig";
+
 
 const StudentDashboard = () => {
   const [quizzes, setQuizzes] = useState([]);
@@ -19,7 +21,8 @@ const StudentDashboard = () => {
     async function fetchQuizzes() {
       try {
         const { data, status } = await axios.get(
-          "http://127.0.0.1:8000/student/quizzes",
+          `${API_BASE_URL}/student/quizzes`,
+
           {
             headers: { Authorization: `Bearer ${token}` },
             signal: controller.signal,

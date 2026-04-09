@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
+import API_BASE_URL from "../apiConfig";
+
 
 const StudentQuiz = () => {
   const { quizId } = useParams();
@@ -19,7 +21,8 @@ const StudentQuiz = () => {
 
     const fetchQuiz = async () => {
       try {
-        const res = await axios.get(`http://127.0.0.1:8000/student/quiz/${quizId}`, {
+        const res = await axios.get(`${API_BASE_URL}/student/quiz/${quizId}`, {
+
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -181,7 +184,8 @@ const StudentQuiz = () => {
             submitted = true;
             
             // Post to the submission route we updated in the backend
-            fetch("http://127.0.0.1:8000/student/quiz/${quizId}/submit", {
+            fetch("${API_BASE_URL}/student/quiz/${quizId}/submit", {
+
               method: "POST",
               headers: { 
                 "Content-Type": "application/json", 
